@@ -25,11 +25,44 @@ Principais features implementadas
   - Docstrings e comentários em arquivos principais para facilitar manutenção futura (explicação de entradas/saídas e erros possíveis).
 
 - Gerador de planilha fictícia (script)
-  - `generate_planilha_ficticia.py`: utilitário para gerar planilhas Excel fictícias (nomes/matrículas/datas/recados). Útil para testes e para subir exemplos sem dados reais.
+  - `generate_planilha_ficticia.py`: utilitário opcional para gerar planilhas Excel fictícias (nomes/matrículas/datas/recados). Use apenas se precisar de dados de exemplo — não é necessário para rodar o projeto.
 
-Como rodar
-----------
-1. Crie um ambiente virtual e instale dependências:
+# Relatório Mensal — Contexto e motivação
+
+Visão geral
+-----------
+Este projeto nasceu de uma necessidade real de trabalho: lidar com um grande volume de alunos e prazos em um sistema que, por muito tempo, continha dados inconsistentes e mal preenchidos. A falta de revisão e limpeza do banco de dados tornava o acompanhamento dos prazos impreciso e trabalhoso.
+
+Motivação (caso real)
+---------------------
+No meu trabalho eu precisava identificar com clareza quais alunos estavam com pagamentos ou procedimentos em atraso, quem precisava ser notificado e quais os prazos de vencimento. O sistema que usamos fornecia apenas uma planilha bruta como saída — com muitas informações redundantes ou incorretas — o que atrapalhava a análise.
+
+Para resolver isso eu:
+
+1. Fiz uma limpeza no banco de dados do meu trabalho, corrigindo informações incorretas e removendo registros inválidos para ter uma base confiável.
+2. Trabalhei com o suporte do sistema para obter uma exportação mais completa, que devolvia uma planilha com as informações necessárias.
+3. Percebi a necessidade de um relatório mais organizado e automatizado, gerado mensalmente, que me permitisse filtrar por mês, categoria e identificar rapidamente quem estava em atraso.
+
+Solução implementada
+---------------------
+Criei este pequeno sistema para processar a planilha (exportada pelo sistema) e gerar um relatório mensal organizado. Hoje a versão atual do projeto:
+
+- Lê uma planilha Excel com os dados brutos.
+- Normaliza e valida as colunas principais (ex.: matrícula, nome, fim do contrato, recados).
+- Aplica filtros por mês, ano e tipo de recado.
+- Gera um arquivo TXT com o relatório organizado por mês, listando os alunos e suas informações relevantes.
+
+Por que um TXT?
+---------------
+No primeiro passo preferi gerar um TXT simples e legível — fácil de abrir e revisar rapidamente. Futuramente a ideia é evoluir para saídas mais ricas (PDF/Excel/integração com outros sistemas) e relatórios mais detalhados.
+
+Proteção de dados e planilha de exemplo
+--------------------------------------
+Para evitar qualquer risco de vazamento de dados sensíveis dos alunos, a planilha de exemplo presente no repositório (quando houver) contém apenas dados totalmente fictícios — nomes, matrículas e datas geradas aleatoriamente. Eu gerei essa planilha apenas como demonstração do formato e nunca inclui dados reais dos alunos neste projeto.
+
+Como usar (resumido)
+--------------------
+1. Instale dependências:
 
 ```powershell
 python -m venv .venv
@@ -37,46 +70,39 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-2. (Opcional) Gere uma planilha fictícia para testes:
-
-```powershell
-# padrão gera 1200 registros
-python generate_planilha_ficticia.py
-```
-
-3. Execute a aplicação GUI:
+2. Execute a GUI:
 
 ```powershell
 python main.py
 ```
 
-Arquivos importantes
--------------------
-- `main.py` — entrada da aplicação e montagem da GUI
-- `controllers/relatorio_controller.py` — valida inputs e chama o service
-- `services/relatorio_service.py` — lógica de geração do relatório
-- `utils/excel_utils.py` — leitura/normalização de Excel e filtros
-- `utils/file_utils.py` — salvar TXT/PDF
-- `generate_planilha_ficticia.py` — script para gerar dados fictícios
-- `data/` — pasta para planilhas de exemplo (ex.: `PLANILHA_EXEMPLO.xlsx`)
-- `requirements.txt` — dependências do projeto
+3. Na aba "Gerar Relatório": selecione a planilha (ou use a planilha de exemplo fictícia), escolha filtros e gere o TXT. Na aba "Relatório Gerado" você pode visualizar o resultado.
 
-Observações e próximos passos sugeridos
---------------------------------------
-- O fluxo atual gera somente o arquivo TXT por padrão. A geração de PDF foi removida do fluxo principal para evitar problemas com formatação e dependências.
-- Melhorias recomendadas:
-  - Adicionar testes automatizados (pytest) cobrindo leitura, filtros e geração de arquivo.
-  - Implementar logging para facilitar depuração em ambientes headless.
-  - Consertar/especificar versões das dependências em `requirements.txt` antes de subir para integração contínua.
-  - Opcional: adicionar um `DOCUMENTATION.md` com exemplos de planilha (colunas esperadas) e um template para os usuários preencherem.
+Arquivos e responsabilidades
+----------------------------
+- `main.py` — interface gráfica e interação com o usuário.
+- `controllers/relatorio_controller.py` — valida entradas e orquestra chamadas ao serviço.
+- `services/relatorio_service.py` — lógica de leitura, filtragem, agrupamento e montagem do relatório.
+- `utils/excel_utils.py` — funções de leitura/normalização de Excel e aplicação de filtros.
+- `utils/file_utils.py` — funções para salvar o relatório (TXT, PDF).
 
-Licença
--------
-Adicione um arquivo `LICENSE` conforme sua preferência (por exemplo MIT) antes de publicar o repositório.
+Próximos passos planejados
+-------------------------
+- Tornar a saída mais rica (PDF formatado, Excel organizado) e adicionar opções de exportação.
+- Adicionar logging e testes automáticos (pytest) para aumentar robustez.
+- Implementar filtros mais avançados e dashboards para facilitar a gestão diária.
 
-Contato
--------
-Se quiser, eu posso:
-- adicionar `DOCUMENTATION.md` com um template de planilha;
-- criar testes `pytest` básicos e um `Makefile`/`tasks.json` para facilitar execução;
-- fixar versões no `requirements.txt`.
+Por que compartilhei este projeto?
+---------------------------------
+Apesar de ser um sistema simples, separei este projeto para demonstrar como eu resolvi um problema real no trabalho: limpeza de dados, automação de relatórios e geração de saída operável para controle de prazos. O resultado foi útil para meu trabalho e acredito que a solução pode ser expandida para uso em outras instituições.
+
+Contato e contribuições
+-----------------------
+Se quiser colaborar, sugerir melhorias ou adaptar o projeto para outro contexto, abra uma issue ou um pull request no repositório.
+
+## 📄 Licença
+
+Este projeto está licenciado sob os termos da [Licença MIT](./LICENSE).
+
+Você é livre para usar, modificar e distribuir este código para fins pessoais ou comerciais, desde que mantenha o crédito ao autor original.
+
