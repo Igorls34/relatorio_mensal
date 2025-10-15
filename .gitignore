@@ -1,0 +1,14 @@
+__pycache__/
+.venv/
+venv/
+*.pyc
+*.pyo
+*.pyd
+data/PLANILHA_GENERATED.xlsx
+data/*.xlsx
+*.egg-info/
+dist/
+build/
+.vscode/
+env/
+\.env
